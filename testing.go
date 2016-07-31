@@ -3,10 +3,17 @@ package main
 import (
 	"database/sql"
 	"testing"
+
+	"github.com/DATA-DOG/go-txdb"
+	_ "github.com/lib/pq" // sql database
 )
 
+func init() {
+	txdb.Register("txdb", "postgres", "user=pgtest dbname=pgtest sslmode=disable")
+}
+
 func setupModelTest(t *testing.T) (*sql.Tx, func()) {
-	db, err := sql.Open("postgres", "user=pgtest dbname=pgtest sslmode=disable")
+	db, err := sql.Open("txdb", "dummy")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -20,6 +27,23 @@ func setupModelTest(t *testing.T) (*sql.Tx, func()) {
 		db.Close()
 	}
 	return tx, cleanup
+}
+
+// TestDB db for test
+type TestDB struct {
+	*sql.DB
+}
+
+func setupServiceTest(t *testing.T) (DBer, func()) {
+	db, err := sql.Open("txdb", "dummy")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cleanup := func() {
+		db.Close()
+	}
+	return db, cleanup
 }
 
 // TestCreateUserData creates t1 test data

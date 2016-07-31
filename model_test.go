@@ -81,3 +81,26 @@ func TestGetUserWeekAgoFromNow(t *testing.T) {
 		t.Logf("%+v", a)
 	}
 }
+
+func TestSelectAll(t *testing.T) {
+	tx, cleanup := setupModelTest(t)
+	defer cleanup()
+
+	rows, err := tx.Query(`select id, name, status, created_at from app_user`)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var users []AppUser
+	for rows.Next() {
+		var u AppUser
+		err := rows.Scan(&u.ID, &u.Name, &u.Status, &u.CreatedAt)
+		if err != nil {
+			t.Fatal(err)
+		}
+		users = append(users, u)
+	}
+	for _, d := range users {
+		t.Logf("%+v", d)
+	}
+}

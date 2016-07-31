@@ -114,6 +114,21 @@ type AppEvent struct {
 	CreatedAt time.Time
 }
 
+// Insert insert event
+func (e *AppEvent) Insert(q Queryer) error {
+	err := q.QueryRow(`
+	INSERT INTO app_event (
+		user_id
+		, category
+		, created_at
+	) VALUES ($1, $2, $3) RETURNING id
+	`, e.UserID, e.Category, e.CreatedAt).Scan(&e.ID)
+	if err != nil {
+		return errors.Wrap(err, "failed to create app_event")
+	}
+	return nil
+}
+
 // AppEventSummary test table
 type AppEventSummary struct {
 	ID        int
