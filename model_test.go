@@ -5,12 +5,13 @@ import (
 	"time"
 )
 
-func TestT1Insert(t *testing.T) {
+func TestUserInsert(t *testing.T) {
 	tx, cleanup := setupModelTest(t)
 	defer cleanup()
 
-	t1 := T1{
-		Val:       "testval",
+	t1 := User{
+		Name:      "testname",
+		Status:    UserStatusActive,
 		CreatedAt: time.Now(),
 	}
 	if err := t1.Insert(tx); err != nil {
@@ -22,52 +23,57 @@ func TestT1Insert(t *testing.T) {
 	t.Logf("%+v", t1)
 }
 
-func TestGetT1ByID(t *testing.T) {
+func TestGetUserByID(t *testing.T) {
 	tx, cleanup := setupModelTest(t)
 	defer cleanup()
 
-	t1 := &T1{
-		Val:       "t01",
+	t1 := &User{
+		Name:      "t01",
+		Status:    UserStatusActive,
 		CreatedAt: time.Now(),
 	}
-	TestCreateT1Data(t, tx, t1)
-	t2 := &T1{
-		Val:       "t02",
+	TestCreateUserData(t, tx, t1)
+	t2 := &User{
+		Name:      "t02",
+		Status:    UserStatusActive,
 		CreatedAt: time.Now(),
 	}
-	TestCreateT1Data(t, tx, t2)
+	TestCreateUserData(t, tx, t2)
 
-	target, err := GetT1ByID(tx, t1.ID)
+	target, err := GetUserByID(tx, t1.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if target.Val != t1.Val {
-		t.Errorf("got %s want %s", target.Val, t1.Val)
+	if target.Name != t1.Name {
+		t.Errorf("got %s want %s", target.Name, t1.Name)
 	}
 }
 
-func TestGetT1WeekAgoFromNow(t *testing.T) {
+func TestGetUserWeekAgoFromNow(t *testing.T) {
 	tx, cleanup := setupModelTest(t)
 	defer cleanup()
 
 	n := time.Now()
-	t0 := &T1{
-		Val:       "t00",
+	t0 := &User{
+		Name:      "t00",
+		Status:    UserStatusActive,
 		CreatedAt: n.AddDate(0, 0, -7),
 	}
-	TestCreateT1Data(t, tx, t0)
-	t1 := &T1{
-		Val:       "t01",
+	TestCreateUserData(t, tx, t0)
+	t1 := &User{
+		Name:      "t01",
+		Status:    UserStatusActive,
 		CreatedAt: n.AddDate(0, 0, -10),
 	}
-	TestCreateT1Data(t, tx, t1)
-	t2 := &T1{
-		Val:       "t02",
+	TestCreateUserData(t, tx, t1)
+	t2 := &User{
+		Name:      "t02",
+		Status:    UserStatusActive,
 		CreatedAt: n.AddDate(0, 0, -1),
 	}
-	TestCreateT1Data(t, tx, t2)
+	TestCreateUserData(t, tx, t2)
 
-	targets, err := GetT1WeekAgoFromNow(tx, n)
+	targets, err := GetUserWeekAgoFromNow(tx, n)
 	if err != nil {
 		t.Fatal(err)
 	}

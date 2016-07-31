@@ -22,9 +22,10 @@ func setupModelTest(t *testing.T) (*sql.Tx, func()) {
 	return tx, cleanup
 }
 
-// TestCreateT1Data creates t1 test data
-func TestCreateT1Data(t *testing.T, q Queryer, t1 *T1) {
-	if err := t1.Insert(q); err != nil {
+// TestCreateUserData creates t1 test data
+func TestCreateUserData(t *testing.T, q Queryer, u *User) *User {
+	if err := u.Insert(q); err != nil {
 		t.Fatal(err)
 	}
+	return u
 }

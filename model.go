@@ -6,89 +6,118 @@ import (
 	"github.com/pkg/errors"
 )
 
-// T1 test table
-type T1 struct {
+// UserStatus
+const (
+	UserStatusActive   = "active"
+	UserStatusInactive = "inactive"
+	UserStatusClosed   = "closed"
+)
+
+// User test table
+type User struct {
 	ID        int
-	Val       string
+	Name      string
 	Status    string
 	CreatedAt time.Time
 }
 
-// Insert creates t1 in db
-func (t *T1) Insert(q Queryer) error {
+// Event test table
+type Event struct {
+	ID        int
+	UserID    int
+	Category  string
+	CreatedAt time.Time
+}
+
+// EventSummary test table
+type EventSummary struct {
+	ID        int
+	UserID    int
+	Category  string
+	Count     int
+	UpdatedAt time.Time
+}
+
+// Insert creates app_user in db
+func (t *User) Insert(q Queryer) error {
 	err := q.QueryRow(`
-	INSERT INTO t1 (
-		val
+	INSERT INTO app_user (
+		name
+		, status
 		, created_at
-	) VALUES ($1, $2) RETURNING id
-	`, t.Val, t.CreatedAt).Scan(&t.ID)
+	) VALUES ($1, $2, $3) RETURNING id
+	`, t.Name, t.Status, t.CreatedAt).Scan(&t.ID)
 	if err != nil {
-		return errors.Wrap(err, "failed to create t1")
+		return errors.Wrap(err, "failed to create app_user")
 	}
 	return nil
 }
 
-// GetT1ByID get t1 by id
-func GetT1ByID(q Queryer, id int) (*T1, error) {
-	var t T1
+// GetUserByID get app_user by id
+func GetUserByID(q Queryer, id int) (*User, error) {
+	var t User
 	err := q.QueryRow(`
 	SELECT
 		id
-		, val
+		, name
+		, status
 		, created_at
-	FROM t1
+	FROM app_user
 	WHERE id = $1
 	`, id).Scan(
 		&t.ID,
-		&t.Val,
+		&t.Name,
+		&t.Status,
 		&t.CreatedAt,
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get t1")
+		return nil, errors.Wrap(err, "failed to get app_user")
 	}
 	return &t, nil
 }
 
-// GetT1WeekAgoFromNow gets t1 created a week ago
-func GetT1WeekAgoFromNow(q Queryer, n time.Time) ([]T1, error) {
+// GetUserWeekAgoFromNow gets app_user created a week ago
+func GetUserWeekAgoFromNow(q Queryer, n time.Time) ([]User, error) {
 	wkAgo := n.AddDate(0, 0, -7)
 	rows, err := q.Query(`
 	SELECT
 		id
-		, val
+		, name
+		, status
 		, created_at
-	FROM t1
+	FROM app_user
 	WHERE created_at <= $1
 	`, wkAgo)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get t1")
+		return nil, errors.Wrap(err, "failed to get app_user")
 	}
-	var l []T1
+	var l []User
 	for rows.Next() {
-		var t T1
-		rows.Scan(&t.ID, &t.Val, &t.CreatedAt)
+		var t User
+		rows.Scan(&t.ID, &t.Name, &t.Status, &t.CreatedAt)
 		l = append(l, t)
 	}
 	return l, nil
 }
 
-// GetT1ByVal gets t1 by val
-func GetT1ByVal(q Queryer, val string) ([]T1, error) {
+// GetUserByName gets app_user by val
+func GetUserByName(q Queryer, name string) ([]User, error) {
 	rows, err := q.Query(`
 	SELECT
 		id
-		, val
+		, name
+		, status
 		, created_at
-	FROM t1
-	WHERE val = $1
-	`, val)
+	FROM app_user
+	WHERE name = $1
+	`, name)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get t1")
+		return nil, errors.Wrap(err, "failed to get app_user")
 	}
-	var l []T1
+	var l []User
 	for rows.Next() {
-		var t T1
-		rows.Scan(&t.ID, &t.Val, &t.CreatedAt)
+		var t User
+		rows.Scan(&t.ID, &t.Name, &t.Status, &t.CreatedAt)
 		l = append(l, t)
 	}
 	return l, nil
