@@ -13,33 +13,16 @@ const (
 	UserStatusClosed   = "closed"
 )
 
-// User test table
-type User struct {
+// AppUser test table
+type AppUser struct {
 	ID        int
 	Name      string
 	Status    string
 	CreatedAt time.Time
 }
 
-// Event test table
-type Event struct {
-	ID        int
-	UserID    int
-	Category  string
-	CreatedAt time.Time
-}
-
-// EventSummary test table
-type EventSummary struct {
-	ID        int
-	UserID    int
-	Category  string
-	Count     int
-	UpdatedAt time.Time
-}
-
 // Insert creates app_user in db
-func (t *User) Insert(q Queryer) error {
+func (t *AppUser) Insert(q Queryer) error {
 	err := q.QueryRow(`
 	INSERT INTO app_user (
 		name
@@ -54,8 +37,8 @@ func (t *User) Insert(q Queryer) error {
 }
 
 // GetUserByID get app_user by id
-func GetUserByID(q Queryer, id int) (*User, error) {
-	var t User
+func GetUserByID(q Queryer, id int) (*AppUser, error) {
+	var t AppUser
 	err := q.QueryRow(`
 	SELECT
 		id
@@ -77,7 +60,7 @@ func GetUserByID(q Queryer, id int) (*User, error) {
 }
 
 // GetUserWeekAgoFromNow gets app_user created a week ago
-func GetUserWeekAgoFromNow(q Queryer, n time.Time) ([]User, error) {
+func GetUserWeekAgoFromNow(q Queryer, n time.Time) ([]AppUser, error) {
 	wkAgo := n.AddDate(0, 0, -7)
 	rows, err := q.Query(`
 	SELECT
@@ -91,9 +74,9 @@ func GetUserWeekAgoFromNow(q Queryer, n time.Time) ([]User, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get app_user")
 	}
-	var l []User
+	var l []AppUser
 	for rows.Next() {
-		var t User
+		var t AppUser
 		rows.Scan(&t.ID, &t.Name, &t.Status, &t.CreatedAt)
 		l = append(l, t)
 	}
@@ -101,7 +84,7 @@ func GetUserWeekAgoFromNow(q Queryer, n time.Time) ([]User, error) {
 }
 
 // GetUserByName gets app_user by val
-func GetUserByName(q Queryer, name string) ([]User, error) {
+func GetUserByName(q Queryer, name string) ([]AppUser, error) {
 	rows, err := q.Query(`
 	SELECT
 		id
@@ -114,11 +97,28 @@ func GetUserByName(q Queryer, name string) ([]User, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get app_user")
 	}
-	var l []User
+	var l []AppUser
 	for rows.Next() {
-		var t User
+		var t AppUser
 		rows.Scan(&t.ID, &t.Name, &t.Status, &t.CreatedAt)
 		l = append(l, t)
 	}
 	return l, nil
+}
+
+// AppEvent test table
+type AppEvent struct {
+	ID        int
+	UserID    int
+	Category  string
+	CreatedAt time.Time
+}
+
+// AppEventSummary test table
+type AppEventSummary struct {
+	ID        int
+	UserID    int
+	Category  string
+	Count     int
+	UpdatedAt time.Time
 }

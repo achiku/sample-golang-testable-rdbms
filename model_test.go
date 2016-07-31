@@ -9,7 +9,7 @@ func TestUserInsert(t *testing.T) {
 	tx, cleanup := setupModelTest(t)
 	defer cleanup()
 
-	t1 := User{
+	t1 := AppUser{
 		Name:      "testname",
 		Status:    UserStatusActive,
 		CreatedAt: time.Now(),
@@ -27,13 +27,13 @@ func TestGetUserByID(t *testing.T) {
 	tx, cleanup := setupModelTest(t)
 	defer cleanup()
 
-	t1 := &User{
+	t1 := &AppUser{
 		Name:      "t01",
 		Status:    UserStatusActive,
 		CreatedAt: time.Now(),
 	}
 	TestCreateUserData(t, tx, t1)
-	t2 := &User{
+	t2 := &AppUser{
 		Name:      "t02",
 		Status:    UserStatusActive,
 		CreatedAt: time.Now(),
@@ -54,19 +54,19 @@ func TestGetUserWeekAgoFromNow(t *testing.T) {
 	defer cleanup()
 
 	n := time.Now()
-	t0 := &User{
+	t0 := &AppUser{
 		Name:      "t00",
 		Status:    UserStatusActive,
 		CreatedAt: n.AddDate(0, 0, -7),
 	}
 	TestCreateUserData(t, tx, t0)
-	t1 := &User{
+	t1 := &AppUser{
 		Name:      "t01",
 		Status:    UserStatusActive,
 		CreatedAt: n.AddDate(0, 0, -10),
 	}
 	TestCreateUserData(t, tx, t1)
-	t2 := &User{
+	t2 := &AppUser{
 		Name:      "t02",
 		Status:    UserStatusActive,
 		CreatedAt: n.AddDate(0, 0, -1),

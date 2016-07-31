@@ -23,7 +23,7 @@ func setupModelTest(t *testing.T) (*sql.Tx, func()) {
 }
 
 // TestCreateUserData creates t1 test data
-func TestCreateUserData(t *testing.T, q Queryer, u *User) *User {
+func TestCreateUserData(t *testing.T, q Queryer, u *AppUser) *AppUser {
 	if err := u.Insert(q); err != nil {
 		t.Fatal(err)
 	}
