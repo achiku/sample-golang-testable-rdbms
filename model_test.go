@@ -86,6 +86,17 @@ func TestSelectAll(t *testing.T) {
 	tx, cleanup := setupModelTest(t)
 	defer cleanup()
 
+	ds := []AppUser{
+		AppUser{Name: "test01", Status: UserStatusActive, CreatedAt: time.Now()},
+		AppUser{Name: "test02", Status: UserStatusActive, CreatedAt: time.Now()},
+		AppUser{Name: "test03", Status: UserStatusActive, CreatedAt: time.Now()},
+	}
+	for _, d := range ds {
+		if err := d.Insert(tx); err != nil {
+			t.Fatal(err)
+		}
+	}
+
 	rows, err := tx.Query(`select id, name, status, created_at from app_user`)
 	if err != nil {
 		t.Fatal(err)
