@@ -101,6 +101,7 @@ func TestSelectAll(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer rows.Close()
 
 	var users []AppUser
 	for rows.Next() {
